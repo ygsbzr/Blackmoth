@@ -15,7 +15,7 @@ namespace BlackmothMod
     {
         public static Blackmoth Instance;
 
-        public override string GetVersion() => "2.0.0";
+        public override string GetVersion() => "2.1.0";
 
         public override void Initialize()
         {
