@@ -2,13 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.InteropServices.ComTypes;
 using GlobalEnums;
 using HutongGames.PlayMaker;
 using HutongGames.PlayMaker.Actions;
 using Modding;
-using ModCommon;
-using ModCommon.Util;
 using UnityEngine;
 using static FSMUtility;
 
@@ -27,15 +24,15 @@ namespace BlackmothMod
             Instance.Log("Blackmoth initializing!");
             
             
-            ModHooks.Instance.NewGameHook += GetReferences;
-            ModHooks.Instance.AfterSavegameLoadHook += GetReferences;
+            ModHooks.NewGameHook += GetReferences;
+            ModHooks.AfterSavegameLoadHook += GetReferences;
             
-            ModHooks.Instance.LanguageGetHook += Descriptions;
+            ModHooks.LanguageGetHook += Descriptions;
 
-            ModHooks.Instance.HeroUpdateHook += Update;
-            ModHooks.Instance.DashVectorHook += CalculateDashVelocity;
-            ModHooks.Instance.DashPressedHook += CheckForDash;
-            ModHooks.Instance.TakeDamageHook += InstanceOnTakeDamageHook;
+            ModHooks.HeroUpdateHook += Update;
+            ModHooks.DashVectorHook += CalculateDashVelocity;
+            ModHooks.DashPressedHook += CheckForDash;
+            ModHooks.TakeDamageHook += InstanceOnTakeDamageHook;
             On.HeroController.LookForQueueInput += HeroControllerOnLookForQueueInput;
             On.HealthManager.TakeDamage += SetDamages;
 
@@ -753,6 +750,68 @@ Even though it's quite powerful, it seems as if a Nightmare is preventing it fro
 
                 ["INV_NAME_SHADOWDASH"] = @"Мантия Черного Мотылька"
             };
+            Dictionary<string, string> zhUIDictionary = new Dictionary<string, string>
+            {
+                ["CHARM_DESC_13"] = @"由螳螂部落给予以表示他们的尊敬。
+
+极大增长持有者的冲刺距离, 使他们可以在远距离击打敌人.",
+
+                ["CHARM_DESC_15"] = @"阵亡战士的披风形成。
+                            
+增强持有者的冲刺力量, 使攻击时敌人退的更远.",
+
+                ["CHARM_DESC_16"] = @"包含禁忌的虚空法术.
+
+冲刺时，持有者的身体可以穿过固体",
+
+                ["CHARM_DESC_18"] =
+                    @"增强持有者的攻击力,使其冲刺能对敌人造成更多的伤害 .
+
+这个护符十分脆弱，如果它的持有者被杀死将会被破坏.",
+
+                ["CHARM_DESC_25_G"] =
+                    @"增强持有者的攻击力,使其冲刺能对敌人造成更多的伤害.
+
+这个护符不会损坏.",
+
+                ["CHARM_DESC_31"] = $@"有着被称为{"冲刺大师"}的古怪虫子形象.
+
+持有者能在半空中也更频繁地冲刺. 非常适合那些想要快速移动的虫子.",
+
+                ["CHARM_DESC_32"] =
+                    @"诞生于那些被融合的不完美的废弃披风.
+
+允许持有者更快地使用冲刺.",
+
+                ["CHARM_DESC_35"] =
+                    @"包含将要步入生命的下一个阶段的幼虫们的感激。为武器灌注神圣的力量。
+
+允许持有者上升并变成蛾子，飞向天堂",
+
+                ["CHARM_NAME_16"] = @"虚空之影",
+
+                ["CHARM_NAME_18"] = @"修长披风",
+
+                ["CHARM_NAME_32"] = @"快速冲刺",
+
+                ["CHARM_NAME_35"] = @"蜕蛾挽歌",
+
+                ["INV_DESC_DASH"] =
+                    @"蛾翅线编织成的披风。允许穿戴者项任意方向冲刺",
+
+                ["INV_DESC_SHADOWDASH"] =
+                    @"由深渊的物质形成的披风, 黑蛾的祖先。 允许穿戴着在冲刺时获取灵魂并造成双倍伤害",
+
+                ["INV_DESC_SUPERDASH"] = PlayerData.instance.GetBool("defeatedNightmareGrimm")
+                    ? @"一个古老挖矿魔像的能量核心，以一块强力的水晶塑成。水晶的能量可以被引导，能将持有者以危险的速度向前发射出去。
+
+击败梦魇后，它释放了真正的力量，使使用者更加灵活"
+                    : @"一个古老挖矿魔像的能量核心，以一块强力的水晶塑成。水晶的能量可以被引导，能将持有者以危险的速度向前发射出去。
+
+尽管它很强大, 看起来梦魇阻碍它释放它真正的能力",
+
+                ["INV_NAME_SHADOWDASH"] = @"黑蛾披风"
+            };
             Dictionary<string, string> ptbrPromptDictionary = new Dictionary<string, string>
             {
                 ["NAILSMITH_UPGRADE_1"] = "Pagar Geo para fortalecer a esquiva?",
@@ -807,18 +866,38 @@ Even though it's quite powerful, it seems as if a Nightmare is preventing it fro
 
                 ["GET_DASH_1"] = "пока держите кнопку любого направления для рывка в этом направлении."
             };
+            Dictionary<string, string> zhPromptDictionary = new Dictionary<string, string>
+            {
+                ["NAILSMITH_UPGRADE_1"] = "支付吉欧来加强冲刺？",
+
+                ["NAILSMITH_UPGRADE_2"] = "用苍白矿石和吉欧来加强冲刺？",
+
+                ["NAILSMITH_UPGRADE_3"] = "用两个苍白矿石和吉欧来加强冲刺？",
+
+                ["NAILSMITH_UPGRADE_4"] = "用两个苍白矿石和吉欧来加强冲刺？",
+
+                ["GET_SHADOWDASH_2"] = "使用披风来穿过现实的细缝和并在虚实之间获取灵魂。",
+
+                ["GET_SHADOWDASH_1"] = "在冲刺时从周围环境获取灵魂.",
+
+                ["GET_DASH_2"] = "使用披风快速在空中任意方向冲刺。",
+
+                ["GET_DASH_1"] = "按对应方向键以冲刺。"
+            };
             _flavorDictionary.Add(new KeyValuePair<int, string>(147, "UI"), ptbrUIDictionary);
             _flavorDictionary.Add(new KeyValuePair<int, string>(44, "UI"), enUIDictionary);
             _flavorDictionary.Add(new KeyValuePair<int, string>(154, "UI"), rusUIDictionary);
+            _flavorDictionary.Add(new KeyValuePair<int, string>(199, "UI"), zhUIDictionary);
             _flavorDictionary.Add(new KeyValuePair<int, string>(147, "Prompts"), ptbrPromptDictionary);
             _flavorDictionary.Add(new KeyValuePair<int, string>(44, "Prompts"), enPromptDictionary);
             _flavorDictionary.Add(new KeyValuePair<int, string>(154, "Prompts"), rusPromptDictionary);
+            _flavorDictionary.Add(new KeyValuePair<int, string>(199, "Prompts"), zhPromptDictionary);
             LogDebug("Finished initializing dictionaries.");
         }
         
-        string Descriptions(string key, string sheet)
+        string Descriptions(string key, string sheet,string orig)
         {
-            string ret = Language.Language.GetInternal(key, sheet);
+            string ret = orig;
             int lang = (int)Language.Language.CurrentLanguage();
             KeyValuePair<int, string> langSheet = new KeyValuePair<int, string>(lang, sheet);
             if (!_flavorDictionary.ContainsKey(langSheet)) return ret;
